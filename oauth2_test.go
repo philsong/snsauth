@@ -20,7 +20,7 @@ import (
 	"testing"
 
 	"github.com/go-martini/martini"
-	"github.com/golang/oauth2"
+	"golang.org/x/oauth2"
 	"github.com/martini-contrib/sessions"
 )
 
