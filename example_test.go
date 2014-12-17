@@ -1,12 +1,11 @@
-package oauth2_test
+package oauth2
 
 import (
 	"testing"
 
 	"github.com/go-martini/martini"
-	goauth2 "golang.org/x/oauth2"
-	"github.com/martini-contrib/oauth2"
 	"github.com/martini-contrib/sessions"
+	"golang.org/x/oauth2"
 )
 
 // TODO(jbd): Remove after Go 1.4.
@@ -16,13 +15,17 @@ func TestA(t *testing.T) {}
 func ExampleLogin() {
 	m := martini.Classic()
 	m.Use(sessions.Sessions("my_session", sessions.NewCookieStore([]byte("secret123"))))
-	m.Use(oauth2.Google(
-		goauth2.Client("client_id", "client_secret"),
-		goauth2.RedirectURL("redirect_url"),
-		goauth2.Scope("https://www.googleapis.com/auth/drive"),
+	m.Use(Google(
+		&oauth2.Config{
+			ClientID:     "client_id",
+			ClientSecret: "client_secret",
+			Scopes:       []string{"https://www.googleapis.com/auth/drive"},
+			RedirectURL:  "redirect_url",
+		},
 	))
+
 	// Tokens are injected to the handlers
-	m.Get("/", func(tokens oauth2.Tokens) string {
+	m.Get("/", func(tokens Tokens) string {
 		if tokens.Expired() {
 			return "not logged in, or the access token is expired"
 		}
@@ -33,7 +36,7 @@ func ExampleLogin() {
 	// can be protected with oauth2.LoginRequired handler.
 	// If the user is not authenticated, they will be
 	// redirected to the login path.
-	m.Get("/restrict", oauth2.LoginRequired, func(tokens oauth2.Tokens) string {
+	m.Get("/restrict", LoginRequired, func(tokens Tokens) string {
 		return tokens.Access()
 	})
 
