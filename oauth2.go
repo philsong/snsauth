@@ -77,7 +77,7 @@ func (t *token) Expired() bool {
 	if t == nil {
 		return true
 	}
-	return t.Token.Expired()
+	return !t.Token.Valid()
 }
 
 // ExpiryTime returns the expiry time of the user's access token.
@@ -198,6 +198,7 @@ func handleOAuth2Callback(f *oauth2.Config, s sessions.Session, w http.ResponseW
 	if err != nil {
 		// Pass the error message, or allow dev to provide its own
 		// error handler.
+		fmt.Println(err)
 		http.Redirect(w, r, PathError, codeRedirect)
 		return
 	}
